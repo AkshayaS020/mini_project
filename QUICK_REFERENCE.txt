@@ -1,0 +1,178 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                                                                              ║
+║                   🏥 MEDICAL CONSULTATION SYSTEM                             ║
+║                         QUICK REFERENCE CARD                                 ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ 🚀 QUICK START                                                               │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+  1. Open DEMO_GUIDE.html (double-click)
+  2. Visit http://localhost:5173
+  3. Login: doctor1 / password123
+  4. Record consultation
+  5. View AI-generated report!
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ 🔑 LOGIN CREDENTIALS                                                         │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+  Doctor Account:
+    Username: doctor1
+    Password: password123
+
+  Patient Account:
+    Username: patient1
+    Password: password123
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ 🌐 IMPORTANT URLS                                                            │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+  Frontend:      http://localhost:5173
+  Backend API:   http://localhost:8000
+  API Docs:      http://localhost:8000/docs
+  ReDoc:         http://localhost:8000/redoc
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ 🎤 SAMPLE CONSULTATION (Read this when recording)                           │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+  Doctor: Good morning! What brings you in today?
+  
+  Patient: I've been having severe headaches for the past week. 
+  They start in the morning and get worse throughout the day.
+  
+  Doctor: Can you describe the pain?
+  
+  Patient: It's throbbing pain on the right side. Sometimes I feel nauseous.
+  
+  Doctor: Have you had headaches like this before?
+  
+  Patient: Yes, about 6 months ago, but they went away.
+  
+  Doctor: Are you taking any medications?
+  
+  Patient: Just my blood pressure medication.
+  
+  Doctor: Let me check your blood pressure.
+  Your blood pressure is 145 over 90, slightly elevated. 
+  Pupils are reactive. No neurological deficits.
+  
+  Doctor: This appears to be migraine headaches.
+  I'm prescribing sumatriptan 50mg for when you feel a headache.
+  Keep a headache diary. Avoid caffeine and alcohol.
+  Drink plenty of water. Come back in two weeks.
+  
+  Patient: Thank you, doctor.
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ ✨ KEY FEATURES                                                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+  ✓ Real audio recording (microphone access)
+  ✓ AI-powered analysis (Google Gemini)
+  ✓ Automatic SOAP note generation
+  ✓ Audio playback functionality
+  ✓ Secure authentication (JWT)
+  ✓ Fail-safe validation
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ 📋 WHAT THE AI EXTRACTS                                                      │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+  From the sample consultation above, the AI will extract:
+
+  SUBJECTIVE (Patient's Perspective):
+    • Severe headaches for 1 week
+    • Throbbing pain on right side
+    • Nausea
+    • History of similar headaches 6 months ago
+    • Currently on blood pressure medication
+
+  OBJECTIVE (Doctor's Observations):
+    • Blood pressure: 145/90 (elevated)
+    • Pupils: Reactive
+    • No neurological deficits
+
+  ASSESSMENT:
+    • Clinical assessment based on consultation findings
+
+  PLAN (Treatment & Follow-up):
+    • Prescribed sumatriptan 50mg
+    • Keep headache diary
+    • Avoid caffeine and alcohol
+    • Increase water intake
+    • Follow-up in 2 weeks
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ 🔧 TROUBLESHOOTING                                                           │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+  "Failed to access microphone"
+    → Grant microphone permissions in browser
+
+  "Could not understand audio"
+    → Speak clearly, check microphone is working
+
+  "Audio conversion failed"
+    → Install FFmpeg from https://ffmpeg.org
+
+  "Basic transcription without AI"
+    → Set GOOGLE_API_KEY environment variable
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ 📚 DOCUMENTATION FILES                                                       │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+  DEMO_GUIDE.html                    - Interactive demo guide (START HERE!)
+  README.md                          - Quick reference
+  DEMO_READY.md                      - Demo checklist
+  backend/QUICK_START.md             - Setup instructions
+  backend/CONSULTATION_REPORT_GUIDE.md - Full documentation
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ 🎯 DEMO CHECKLIST                                                            │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+  □ Open DEMO_GUIDE.html
+  □ Navigate to http://localhost:5173
+  □ Login as doctor (doctor1 / password123)
+  □ Go to "Record Consultation"
+  □ Enter patient name
+  □ Click microphone button
+  □ Read sample consultation script
+  □ Click stop button
+  □ Wait for processing
+  □ Review generated SOAP note
+  □ Test audio playback
+  □ Show extracted information
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ 💡 PRO TIPS                                                                  │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+  • Speak clearly and naturally for best results
+  • Use the sample script for consistent demonstrations
+  • Test the playback feature to show real audio was recorded
+  • Highlight the AI extraction in the SOAP note
+  • Mention the fail-safe mechanisms for robustness
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ 🎊 YOU'RE READY!                                                             │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+  Everything is configured and running!
+  
+  Start with: DEMO_GUIDE.html
+  Then visit: http://localhost:5173
+  
+  Good luck with your demo! 🚀
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                                                                              ║
+║                    Need help? Check DEMO_GUIDE.html                          ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
