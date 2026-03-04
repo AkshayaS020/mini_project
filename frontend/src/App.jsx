@@ -8,18 +8,35 @@ import DashboardLayout from './components/DashboardLayout';
 import DashboardPage from './pages/DashboardPage';
 import Patients from './pages/Patients';
 import Settings from './pages/Settings';
+import PatientProfile from './pages/PatientProfile';
+import DoctorProfile from './pages/DoctorProfile';
 import ErrorBoundary from './components/ErrorBoundary';
 
 function App() {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => {
+    // Persist login across page refreshes
+    try {
+      const stored = sessionStorage.getItem('medivoice_user');
+      return stored ? JSON.parse(stored) : null;
+    } catch { return null; }
+  });
 
-  // Protected Layout Wrapper
+  const login = (userData) => {
+    setUser(userData);
+    sessionStorage.setItem('medivoice_user', JSON.stringify(userData));
+  };
+
+  const logout = () => {
+    setUser(null);
+    sessionStorage.removeItem('medivoice_user');
+  };
+
   const ProtectedLayout = ({ allowedRoles }) => {
-    if (!user) return <Navigate to="/" replace />;
-    if (allowedRoles && !allowedRoles.includes(user.role)) return <Navigate to="/dashboard" replace />;
-
+    if (!user) return <Navigate to="/login" replace />;
+    if (allowedRoles && !allowedRoles.includes(user.role))
+      return <Navigate to="/dashboard" replace />;
     return (
-      <DashboardLayout user={user} setUser={setUser}>
+      <DashboardLayout user={user} setUser={logout}>
         <Outlet />
       </DashboardLayout>
     );
@@ -28,34 +45,32 @@ function App() {
   return (
     <ErrorBoundary>
       <BrowserRouter>
-        <div className="min-h-screen font-sans text-slate-900">
-          <Routes>
-            {/* Public Routes */}
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/login" element={!user ? <Login setUser={setUser} /> : <Navigate to="/dashboard" replace />} />
+        <Routes>
+          {/* Public */}
+          <Route path="/" element={<LandingPage />} />
+          <Route
+            path="/login"
+            element={!user
+              ? <Login setUser={login} />
+              : <Navigate to="/dashboard" replace />
+            }
+          />
 
-            {/* Protected Dashboard Routes */}
-            <Route element={<ProtectedLayout allowedRoles={['patient', 'doctor']} />}>
-              <Route path="/dashboard" element={<DashboardPage />} />
-              <Route path="/patients" element={<Patients />} />
-              <Route path="/settings" element={<Settings />} />
-              <Route path="/reports" element={<ReportView />} />
+          {/* Protected — all logged-in users */}
+          <Route element={<ProtectedLayout allowedRoles={['patient', 'doctor']} />}>
+            <Route path="/dashboard" element={<DashboardPage user={user} />} />
+            <Route path="/reports" element={<ReportView user={user} />} />
+            <Route path="/profile" element={user.role === 'doctor' ? <DoctorProfile user={user} /> : <PatientProfile user={user} />} />
+            <Route path="/settings" element={<Settings />} />
 
-              {/* Doctor Only */}
-              <Route
-                path="/record"
-                element={
-                  user?.role === 'doctor'
-                    ? <RecordConsultation user={user} />
-                    : <Navigate to="/dashboard" replace />
-                }
-              />
-            </Route>
+            {/* Doctor-only */}
+            <Route path="/patients" element={user?.role === 'doctor' ? <Patients /> : <Navigate to="/dashboard" replace />} />
+            <Route path="/record" element={user?.role === 'doctor' ? <RecordConsultation user={user} /> : <Navigate to="/dashboard" replace />} />
+          </Route>
 
-            {/* Catch all */}
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </div>
+          {/* Catch-all */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
       </BrowserRouter>
     </ErrorBoundary>
   );

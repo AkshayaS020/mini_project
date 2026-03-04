@@ -31,7 +31,7 @@ class ErrorBoundary extends React.Component {
 
                         <div>
                             <h2 className="text-2xl font-bold text-slate-900">Something went wrong</h2>
-                            <p className="text-slate-500 mt-2">The application encountered an unexpected error.</p>
+                            <p className="text-primary/70 mt-2">The application encountered an unexpected error.</p>
                         </div>
 
                         {this.state.error && (
@@ -42,7 +42,7 @@ class ErrorBoundary extends React.Component {
 
                         <button
                             onClick={this.handleReload}
-                            className="w-full bg-primary hover:bg-blue-600 text-white py-3 rounded-xl font-semibold flex items-center justify-center gap-2 transition-all shadow-lg shadow-blue-500/20"
+                            className="w-full bg-primary hover:bg-primary text-white py-3 rounded-xl font-semibold flex items-center justify-center gap-2 transition-all shadow-lg shadow-blue-500/20"
                         >
                             <RefreshCcw className="h-4 w-4" /> Reload Application
                         </button>

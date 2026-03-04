@@ -1,5 +1,39 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Mic, Square, Loader2, CheckCircle, AlertCircle, Play, Pause } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import {
+    Mic, Square, Loader2, CheckCircle, AlertCircle,
+    Play, Pause, User, Stethoscope, Activity, Pill, MessageCircle
+} from 'lucide-react';
+
+const API = 'http://localhost:8000';
+
+function DialogueBubble({ items, color, icon: Icon, title }) {
+    if (!items || items.length === 0) return null;
+    return (
+        <div className={`card p-5 border-l-4 ${color}`}>
+            <div className="flex items-center gap-2 mb-3">
+                <Icon className="h-4 w-4 text-primary/70" />
+                <h4 className="text-sm font-semibold text-primary/70">{title}</h4>
+            </div>
+            <ul className="space-y-1.5">
+                {items.map((item, i) => (
+                    <li key={i} className="flex items-start gap-2 text-sm text-primary/70">
+                        <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-slate-400 flex-shrink-0" />
+                        {item}
+                    </li>
+                ))}
+            </ul>
+        </div>
+    );
+}
+
+function SoapCard({ title, content, color, className = '' }) {
+    return (
+        <div className={`card p-5 border-l-4 ${color} ${className}`}>
+            <p className="section-title">{title}</p>
+            <p className="text-sm text-primary/70 leading-relaxed whitespace-pre-wrap">{content || '—'}</p>
+        </div>
+    );
+}
 
 export default function RecordConsultation({ user }) {
     const [isRecording, setIsRecording] = useState(false);
@@ -8,7 +42,6 @@ export default function RecordConsultation({ user }) {
     const [report, setReport] = useState(null);
     const [patientName, setPatientName] = useState('');
     const [error, setError] = useState(null);
-    const [audioBlob, setAudioBlob] = useState(null);
     const [audioUrl, setAudioUrl] = useState(null);
     const [isPlaying, setIsPlaying] = useState(false);
 
@@ -18,282 +51,249 @@ export default function RecordConsultation({ user }) {
     const streamRef = useRef(null);
     const audioRef = useRef(null);
 
-    // Timer logic
+    // Timer
     useEffect(() => {
         if (isRecording) {
-            timerRef.current = setInterval(() => {
-                setDuration(prev => prev + 1);
-            }, 100);
+            timerRef.current = setInterval(() => setDuration(p => p + 1), 1000);
         } else {
-            if (timerRef.current) {
-                clearInterval(timerRef.current);
-            }
+            clearInterval(timerRef.current);
         }
-
-        return () => {
-            if (timerRef.current) {
-                clearInterval(timerRef.current);
-            }
-        };
+        return () => clearInterval(timerRef.current);
     }, [isRecording]);
 
     const startRecording = async () => {
         try {
-            setError(null);
-            setReport(null);
-            setDuration(0);
-            setAudioBlob(null);
-            setAudioUrl(null);
-            setIsPlaying(false);
+            setError(null); setReport(null); setDuration(0);
+            setAudioUrl(null); setIsPlaying(false);
             audioChunksRef.current = [];
 
-            // Request microphone access
             const stream = await navigator.mediaDevices.getUserMedia({
-                audio: {
-                    echoCancellation: true,
-                    noiseSuppression: true,
-                    sampleRate: 44100
-                }
+                audio: { echoCancellation: true, noiseSuppression: true, sampleRate: 44100 }
             });
-
             streamRef.current = stream;
 
-            // Create MediaRecorder instance
-            const mediaRecorder = new MediaRecorder(stream, {
-                mimeType: 'audio/webm;codecs=opus'
-            });
-
+            const mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm;codecs=opus' });
             mediaRecorderRef.current = mediaRecorder;
 
-            // Collect audio data
-            mediaRecorder.ondataavailable = (event) => {
-                if (event.data.size > 0) {
-                    audioChunksRef.current.push(event.data);
-                }
-            };
-
-            // Handle recording stop
+            mediaRecorder.ondataavailable = e => { if (e.data.size > 0) audioChunksRef.current.push(e.data); };
             mediaRecorder.onstop = () => {
-                const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
-
-                // Store audio blob and create URL for playback
-                setAudioBlob(audioBlob);
-                const url = URL.createObjectURL(audioBlob);
-                setAudioUrl(url);
-
-                handleProcess(audioBlob);
-
-                // Stop all tracks
-                if (streamRef.current) {
-                    streamRef.current.getTracks().forEach(track => track.stop());
-                }
+                const blob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+                setAudioUrl(URL.createObjectURL(blob));
+                handleProcess(blob);
+                streamRef.current?.getTracks().forEach(t => t.stop());
             };
-
-            // Start recording
             mediaRecorder.start();
             setIsRecording(true);
-
         } catch (err) {
-            console.error('Error accessing microphone:', err);
             setError('Failed to access microphone. Please grant permission and try again.');
         }
     };
 
     const stopRecording = () => {
-        if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
+        if (mediaRecorderRef.current?.state !== 'inactive') {
             mediaRecorderRef.current.stop();
             setIsRecording(false);
         }
     };
 
-    const toggleRecording = () => {
-        if (!isRecording) {
-            startRecording();
-        } else {
-            stopRecording();
-        }
-    };
-
-    const handleProcess = async (audioBlob) => {
-        setIsProcessing(true);
-        setError(null);
-
+    const handleProcess = async (blob) => {
+        setIsProcessing(true); setError(null);
         try {
-            // Create FormData to send audio file
             const formData = new FormData();
-            formData.append('audio_file', audioBlob, 'recording.webm');
-            formData.append('patient_name', patientName || 'Anonymous');
-
-            const response = await fetch(`http://localhost:8000/consultations/process/${patientName || 'Anonymous'}`, {
+            formData.append('audio_file', blob, 'recording.webm');
+            const name = patientName.trim() || 'Anonymous';
+            const res = await fetch(`${API}/consultations/process/${encodeURIComponent(name)}`, {
                 method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${user.token}`
-                },
+                headers: { Authorization: `Bearer ${user.token}` },
                 body: formData
             });
-
-            if (!response.ok) {
-                const err = await response.json();
+            if (!res.ok) {
+                const err = await res.json();
                 throw new Error(err.detail || 'Failed to process consultation');
             }
-
-            const data = await response.json();
-            setReport(data);
-
-        } catch (error) {
-            console.error('Processing error:', error);
-            setError(error.message);
+            setReport(await res.json());
+        } catch (e) {
+            setError(e.message);
         } finally {
             setIsProcessing(false);
         }
     };
 
-    const formatTime = (deciseconds) => {
-        const totalSeconds = Math.floor(deciseconds / 10);
-        const minutes = Math.floor(totalSeconds / 60);
-        const seconds = totalSeconds % 60;
-        return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-    };
+    const formatTime = s => `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
 
     const togglePlayback = () => {
-        if (audioRef.current) {
-            if (isPlaying) {
-                audioRef.current.pause();
-                setIsPlaying(false);
-            } else {
-                audioRef.current.play();
-                setIsPlaying(true);
-            }
-        }
+        if (!audioRef.current) return;
+        if (isPlaying) { audioRef.current.pause(); setIsPlaying(false); }
+        else { audioRef.current.play(); setIsPlaying(true); }
     };
 
-    // Handle audio ended event
     useEffect(() => {
-        if (audioRef.current) {
-            const handleEnded = () => setIsPlaying(false);
-            audioRef.current.addEventListener('ended', handleEnded);
-            return () => {
-                if (audioRef.current) {
-                    audioRef.current.removeEventListener('ended', handleEnded);
-                }
-            };
-        }
+        const el = audioRef.current;
+        const onEnd = () => setIsPlaying(false);
+        el?.addEventListener('ended', onEnd);
+        return () => el?.removeEventListener('ended', onEnd);
     }, [audioUrl]);
 
     return (
-        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-4xl mx-auto">
-            {/* Header */}
+        <div className="space-y-6 animate-in">
+            {/* Page Header */}
             <div>
-                <h2 className="text-2xl font-bold text-slate-900 tracking-tight">New Consultation</h2>
-                <p className="text-slate-500">Record conversation to generate a clinical summary</p>
+                <h2 className="text-2xl font-bold text-slate-900">New Consultation</h2>
+                <p className="text-primary/70 text-sm mt-1">Record a doctor-patient conversation and generate an AI-powered clinical report</p>
             </div>
 
-            {/* Error Message */}
+            {/* Error */}
             {error && (
-                <div className="flex items-center gap-2 text-red-600 bg-red-50 px-4 py-3 rounded-xl border border-red-100">
-                    <AlertCircle className="h-5 w-5" />
-                    <span className="font-medium">{error}</span>
+                <div className="flex items-center gap-2.5 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">
+                    <AlertCircle className="h-4 w-4 flex-shrink-0" /> {error}
                 </div>
             )}
 
-            <div className="glass-panel text-center space-y-10 py-16 px-8 relative overflow-hidden rounded-3xl border border-white/20 shadow-xl">
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary via-accent to-primary opacity-50"></div>
+            {/* Recording Card */}
+            <div className="card p-8 text-center relative overflow-hidden">
+                {/* Decorative gradient bar */}
+                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-teal-400 to-emerald-500" />
 
-                <input
-                    type="text"
-                    placeholder="Patient Name"
-                    className="px-6 py-4 border-none bg-slate-50 rounded-full w-full max-w-sm mx-auto block text-center text-lg font-medium focus:ring-4 focus:ring-primary/10 focus:bg-white transition-all placeholder:text-slate-400 shadow-inner"
-                    value={patientName}
-                    onChange={(e) => setPatientName(e.target.value)}
-                    disabled={isRecording}
-                />
+                {/* Patient Name Input */}
+                <div className="mb-8">
+                    <label className="form-label text-center block">Patient Name</label>
+                    <input
+                        type="text"
+                        placeholder="Enter patient name…"
+                        className="form-input max-w-sm mx-auto text-center"
+                        value={patientName}
+                        onChange={e => setPatientName(e.target.value)}
+                        disabled={isRecording}
+                    />
+                </div>
 
-                <div className="relative inline-block">
+                {/* Mic Button */}
+                <div className="relative inline-flex items-center justify-center mb-6">
                     {isRecording && (
                         <>
-                            <span className="absolute -top-16 left-1/2 -translate-x-1/2 text-red-500 font-mono text-xl font-bold animate-pulse tracking-widest">
-                                {formatTime(duration)}
-                            </span>
-                            <div className="absolute inset-0 bg-red-500 rounded-full animate-ping opacity-20"></div>
-                            <div className="absolute inset-0 bg-red-500 rounded-full animate-ping opacity-20 animation-delay-500"></div>
+                            <span className="absolute h-36 w-36 rounded-full bg-red-400/20 pulse-ring" />
+                            <span className="absolute h-44 w-44 rounded-full bg-red-400/10 pulse-ring animation-delay-400" />
                         </>
                     )}
-
                     <button
-                        onClick={toggleRecording}
+                        onClick={isRecording ? stopRecording : startRecording}
                         disabled={isProcessing}
-                        className={`w-36 h-36 rounded-full flex items-center justify-center transition-all duration-500 shadow-2xl relative z-10 ${isRecording
-                            ? 'bg-red-500 hover:bg-red-600 scale-110 shadow-red-500/50'
-                            : 'bg-gradient-to-br from-primary to-blue-600 hover:scale-105 hover:shadow-blue-500/50'
-                            } ${isProcessing ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        className={`relative z-10 h-28 w-28 rounded-full flex items-center justify-center
+                                    transition-all duration-300 shadow-xl
+                                    ${isRecording
+                                ? 'bg-red-500 hover:bg-red-600 scale-105 shadow-red-400/40'
+                                : 'bg-gradient-to-br from-primary to-accent hover:scale-105 shadow-blue-500/30'
+                            }
+                                    ${isProcessing ? 'opacity-50 cursor-not-allowed scale-100' : ''}`}
                     >
-                        {isRecording ? (
-                            <Square className="h-14 w-14 text-white fill-current" />
-                        ) : (
-                            <Mic className="h-16 w-16 text-white" />
-                        )}
+                        {isRecording
+                            ? <Square className="h-12 w-12 text-white fill-current" />
+                            : <Mic className="h-12 w-12 text-white" />
+                        }
                     </button>
                 </div>
 
-                <p className={`text-sm font-medium transition-colors uppercase tracking-wide ${isRecording ? 'text-red-500' : 'text-slate-400'}`}>
-                    {isRecording ? "Tap to stop & process" : "Tap microphone to start recording"}
+                {/* Timer */}
+                {isRecording && (
+                    <p className="text-red-500 font-mono text-2xl font-bold mb-2 animate-pulse">
+                        {formatTime(duration)}
+                    </p>
+                )}
+
+                <p className={`text-xs font-semibold uppercase tracking-widest ${isRecording ? 'text-red-500' : 'text-primary/70'}`}>
+                    {isRecording ? 'Tap to stop & process' : 'Tap microphone to start recording'}
                 </p>
             </div>
 
-            {/* Audio Player */}
+            {/* Audio Playback */}
             {audioUrl && (
-                <div className="glass-panel p-6 rounded-2xl text-center space-y-4 animate-in fade-in slide-in-from-bottom-4">
-                    <div className="flex items-center justify-center gap-4">
-                        <button
-                            onClick={togglePlayback}
-                            className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 flex items-center justify-center transition-all duration-300 shadow-lg hover:shadow-purple-500/50 hover:scale-105"
-                        >
-                            {isPlaying ? (
-                                <Pause className="h-8 w-8 text-white fill-current" />
-                            ) : (
-                                <Play className="h-8 w-8 text-white fill-current ml-1" />
-                            )}
-                        </button>
-                        <div className="text-left">
-                            <p className="text-sm font-bold text-slate-700">Recording Available</p>
-                            <p className="text-xs text-slate-500">Click to {isPlaying ? 'pause' : 'play'} audio</p>
-                        </div>
+                <div className="card p-5 flex items-center gap-4 animate-in">
+                    <button
+                        onClick={togglePlayback}
+                        className="h-12 w-12 rounded-full bg-gradient-to-br from-violet-500 to-purple-600
+                                   flex items-center justify-center shadow-lg shadow-purple-500/25
+                                   hover:scale-105 transition-transform flex-shrink-0"
+                    >
+                        {isPlaying ? <Pause className="h-5 w-5 text-white fill-current" /> : <Play className="h-5 w-5 text-white fill-current ml-0.5" />}
+                    </button>
+                    <div>
+                        <p className="text-sm font-semibold text-primary/70">Recording Ready</p>
+                        <p className="text-xs text-primary/70">Duration: {formatTime(duration)}</p>
                     </div>
                     <audio ref={audioRef} src={audioUrl} className="hidden" />
                 </div>
             )}
 
+            {/* Processing State */}
             {isProcessing && (
-                <div className="glass-panel p-8 rounded-2xl text-center space-y-4 animate-in fade-in">
-                    <Loader2 className="h-10 w-10 text-primary animate-spin mx-auto" />
-                    <p className="text-slate-600 font-medium">Processing consultation audio...</p>
+                <div className="card p-8 text-center animate-in">
+                    <Loader2 className="h-10 w-10 text-primary animate-spin mx-auto mb-3" />
+                    <p className="font-semibold text-primary/70">Analysing consultation…</p>
+                    <p className="text-sm text-primary/70 mt-1">Transcribing audio and extracting clinical insights</p>
                 </div>
             )}
 
+            {/* Report */}
             {report && (
-                <div className="space-y-6 animate-in slide-in-from-bottom-8 duration-700">
-                    <div className="flex items-center gap-2 text-green-600 bg-green-50 px-4 py-3 rounded-xl border border-green-100">
-                        <CheckCircle className="h-5 w-5" />
-                        <span className="font-medium">Consultation Processed Successfully</span>
+                <div className="space-y-5 animate-in">
+                    {/* Success Banner */}
+                    <div className="flex items-center gap-2 bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-3 rounded-xl text-sm">
+                        <CheckCircle className="h-4 w-4" />
+                        <span className="font-semibold">Consultation processed successfully</span>
+                        <span className="text-emerald-500 ml-1">— Patient: {report.patient_name || patientName}</span>
                     </div>
 
-                    <div className="grid gap-6 md:grid-cols-2">
-                        <div className="glass-panel p-6 rounded-2xl border-l-4 border-l-blue-500 shadow-md">
-                            <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-2">Subjective</h3>
-                            <p className="text-slate-700 leading-relaxed whitespace-pre-wrap">{report.subjective}</p>
+                    {/* Consultation Record — Structured Dialogue */}
+                    <div className="card p-6">
+                        <div className="flex items-center gap-2 mb-5">
+                            <MessageCircle className="h-5 w-5 text-primary" />
+                            <h3 className="font-bold text-primary/70">Consultation Record</h3>
                         </div>
-                        <div className="glass-panel p-6 rounded-2xl border-l-4 border-l-purple-500 shadow-md">
-                            <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-2">Objective</h3>
-                            <p className="text-slate-700 leading-relaxed whitespace-pre-wrap">{report.objective}</p>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <DialogueBubble
+                                items={report.patient_said}
+                                color="border-blue-400"
+                                icon={User}
+                                title="Patient Said"
+                            />
+                            <DialogueBubble
+                                items={report.doctor_said}
+                                color="border-accent"
+                                icon={Stethoscope}
+                                title="Doctor Said"
+                            />
+                            <DialogueBubble
+                                items={report.symptoms}
+                                color="border-orange-400"
+                                icon={Activity}
+                                title="Symptoms Identified"
+                            />
+                            <DialogueBubble
+                                items={report.doctor_advice}
+                                color="border-emerald-400"
+                                icon={Pill}
+                                title="Doctor's Advice"
+                            />
                         </div>
-                        <div className="glass-panel p-6 rounded-2xl border-l-4 border-l-orange-500 shadow-md">
-                            <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-2">Assessment</h3>
-                            <p className="text-slate-700 leading-relaxed whitespace-pre-wrap">{report.assessment}</p>
+                    </div>
+
+                    {/* SOAP Note */}
+                    <div className="card p-6">
+                        <h3 className="font-bold text-primary/70 mb-4 flex items-center gap-2">
+                            <Activity className="h-5 w-5 text-accent" /> SOAP Note
+                        </h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <SoapCard title="Subjective" content={report.subjective} color="border-primary" />
+                            <SoapCard title="Objective" content={report.objective} color="border-accent" />
+                            <SoapCard title="Assessment" content={report.assessment} color="border-orange-500" />
+                            <SoapCard title="Plan" content={report.plan} color="border-emerald-500" />
                         </div>
-                        <div className="glass-panel p-6 rounded-2xl border-l-4 border-l-green-500 shadow-md">
-                            <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-2">Plan</h3>
-                            <p className="text-slate-700 leading-relaxed whitespace-pre-wrap">{report.plan}</p>
-                        </div>
+                        {report.additional_notes && (
+                            <div className="mt-4 p-4 bg-slate-50 rounded-xl border border-slate-100">
+                                <p className="section-title">Additional Notes</p>
+                                <p className="text-sm text-primary/70">{report.additional_notes}</p>
+                            </div>
+                        )}
                     </div>
                 </div>
             )}

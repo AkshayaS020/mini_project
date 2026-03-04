@@ -117,7 +117,7 @@ export default function DemoModal({ isOpen, onClose }) {
                     onClick={onClose}
                     className="absolute top-4 right-4 z-10 p-2 rounded-full bg-white/90 hover:bg-white shadow-lg transition-all hover:scale-110"
                 >
-                    <X className="h-6 w-6 text-slate-700" />
+                    <X className="h-6 w-6 text-primary/70" />
                 </button>
 
                 {/* Progress Bar */}
@@ -158,7 +158,7 @@ export default function DemoModal({ isOpen, onClose }) {
                                 <h2 className="text-3xl lg:text-4xl font-bold text-slate-900 mb-4 leading-tight">
                                     {step.title}
                                 </h2>
-                                <p className="text-lg text-slate-600 leading-relaxed">
+                                <p className="text-lg text-primary/70 leading-relaxed">
                                     {step.description}
                                 </p>
                             </div>
@@ -172,7 +172,7 @@ export default function DemoModal({ isOpen, onClose }) {
                                         style={{ animationDelay: `${index * 100}ms` }}
                                     >
                                         <div className="mt-1 w-2 h-2 rounded-full bg-gradient-to-r from-primary to-accent flex-shrink-0" />
-                                        <p className="text-slate-700">{detail}</p>
+                                        <p className="text-primary/70">{detail}</p>
                                     </div>
                                 ))}
                             </div>
@@ -181,7 +181,7 @@ export default function DemoModal({ isOpen, onClose }) {
                             {currentStep === demoSteps.length - 1 && (
                                 <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-6 rounded-2xl border-2 border-primary/20">
                                     <h3 className="font-bold text-slate-900 mb-2">Ready to get started?</h3>
-                                    <p className="text-slate-600 text-sm mb-4">
+                                    <p className="text-primary/70 text-sm mb-4">
                                         Login with <span className="font-mono bg-white px-2 py-1 rounded">doctor1</span> /
                                         <span className="font-mono bg-white px-2 py-1 rounded ml-1">password123</span>
                                     </p>
@@ -203,8 +203,8 @@ export default function DemoModal({ isOpen, onClose }) {
                                     onClick={prevStep}
                                     disabled={currentStep === 0}
                                     className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all ${currentStep === 0
-                                            ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
-                                            : 'bg-slate-100 text-slate-700 hover:bg-slate-200 hover:scale-105'
+                                            ? 'bg-slate-100 text-primary/70 cursor-not-allowed'
+                                            : 'bg-slate-100 text-primary/70 hover:bg-slate-200 hover:scale-105'
                                         }`}
                                 >
                                     <ChevronLeft className="h-5 w-5" />

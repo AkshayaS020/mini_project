@@ -1,56 +1,165 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;0,14..32,800;1,14..32,400&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ── Design Tokens ── */
+:root {
+  --bg-page: #F5F7FA;
+  --sidebar-bg: #0B2447;
+  --card-shadow: 0 4px 20px rgba(11, 36, 71, 0.05);
+}
+
 @layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
-    @apply bg-background text-slate-900 font-sans antialiased selection:bg-primary/20;
-    background-image: radial-gradient(at 0% 0%, hsla(253, 16%, 7%, 1) 0, transparent 50%), radial-gradient(at 50% 0%, hsla(225, 39%, 30%, 1) 0, transparent 50%), radial-gradient(at 100% 0%, hsla(339, 49%, 30%, 1) 0, transparent 50%);
+    @apply antialiased text-slate-800;
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    background-color: var(--bg-page);
+    background-image:
+      radial-gradient(ellipse at 0% 0%, hsla(213, 80%, 95%, 0.6) 0, transparent 55%),
+      radial-gradient(ellipse at 100% 100%, hsla(170, 70%, 93%, 0.5) 0, transparent 55%);
     background-attachment: fixed;
   }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5 {
+    @apply font-semibold tracking-tight;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-slate-300 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-slate-400;
+  }
 }
 
+/* ── Reusable utilities ── */
 @layer utilities {
+
+  /* Clean white card */
+  .card {
+    @apply bg-white rounded-2xl border border-slate-100 shadow-sm;
+    box-shadow: var(--card-shadow);
+  }
+
+  /* Soft translucent glass panel */
   .glass-panel {
-    @apply bg-white/70 backdrop-blur-lg border border-white/20 shadow-xl;
+    @apply bg-white/80 backdrop-blur-md rounded-2xl border border-white/60;
+    box-shadow: var(--card-shadow);
   }
 
-  .glass-button {
-    @apply bg-white/10 hover:bg-white/20 active:bg-white/30 backdrop-blur-md border border-white/10 transition-all duration-300;
+  /* Section header */
+  .section-title {
+    @apply text-sm font-bold text-slate-400 uppercase tracking-widest mb-3;
+  }
+
+  /* Input field */
+  .form-input {
+    @apply w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-200;
+  }
+
+  /* Select */
+  .form-select {
+    @apply form-input appearance-none cursor-pointer;
+  }
+
+  /* Label */
+  .form-label {
+    @apply block text-sm font-semibold text-slate-600 mb-1.5;
+  }
+
+  /* Primary button */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-primary hover:bg-secondary text-white font-semibold text-sm rounded-xl shadow-md shadow-primary/25 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-primary/40 active:translate-y-0 active:shadow-none disabled:opacity-50 disabled:cursor-not-allowed disabled:translate-y-0;
+  }
+
+  /* Secondary (outline) button */
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-sm rounded-xl transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50;
+  }
+
+  /* Danger button */
+  .btn-danger {
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-danger hover:bg-red-700 text-white font-semibold text-sm rounded-xl shadow-md shadow-danger/20 transition-all duration-200;
+  }
+
+  /* Teal / success button */
+  .btn-teal {
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-accent hover:bg-teal-700 text-white font-semibold text-sm rounded-xl shadow-md shadow-accent/25 transition-all duration-200 hover:-translate-y-0.5;
+  }
+
+  /* Status badges */
+  .badge-green {
+    @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-success/10 text-success border border-success/20;
+  }
+
+  .badge-blue {
+    @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-primary/10 text-primary border border-primary/20;
+  }
+
+  .badge-orange {
+    @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-warning/10 text-warning border border-warning/20;
+  }
+
+  .badge-slate {
+    @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-600 border border-slate-200;
+  }
+
+  /* SOAP section colour strips */
+  .soap-subjective {
+    @apply border-l-4 border-primary;
+  }
+
+  .soap-objective {
+    @apply border-l-4 border-accent;
+  }
+
+  .soap-assessment {
+    @apply border-l-4 border-warning;
+  }
+
+  .soap-plan {
+    @apply border-l-4 border-success;
+  }
+
+  /* Dialogue capsule */
+  .dialogue-patient {
+    @apply bg-primary/5 border border-primary/20 rounded-xl p-3 text-primary text-sm;
+  }
+
+  .dialogue-doctor {
+    @apply bg-accent/5 border border-accent/20 rounded-xl p-3 text-accent text-sm;
   }
 }
 
-.btn-primary {
-  @apply bg-primary hover:bg-blue-600 text-white px-6 py-2.5 rounded-xl transition-all duration-300 shadow-lg shadow-blue-500/30 hover:shadow-blue-500/40 hover:-translate-y-0.5 active:translate-y-0 font-medium;
-}
-
-.card {
-  @apply glass-panel rounded-2xl p-6;
-}
-
-/* Custom Animations */
-@keyframes blob {
-
-  0%,
-  100% {
-    transform: translate(0, 0) scale(1);
-  }
-
-  33% {
-    transform: translate(30px, -50px) scale(1.1);
-  }
-
-  66% {
-    transform: translate(-20px, 20px) scale(0.9);
-  }
-}
-
-@keyframes animate-in {
+/* ── Animations ── */
+@keyframes fadeSlideUp {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(16px);
   }
 
   to {
@@ -59,8 +168,66 @@
   }
 }
 
+@keyframes blob {
+
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+
+  33% {
+    transform: translate(28px, -48px) scale(1.08);
+  }
+
+  66% {
+    transform: translate(-18px, 18px) scale(0.94);
+  }
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+
+  100% {
+    transform: scale(1.7);
+    opacity: 0;
+  }
+}
+
+@keyframes spin-slow {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-in {
+  animation: fadeSlideUp 0.45s ease-out both;
+}
+
 .animate-blob {
   animation: blob 7s infinite;
+}
+
+.pulse-ring {
+  animation: pulse-ring 1.4s ease-out infinite;
+}
+
+.spin-slow {
+  animation: spin-slow 3s linear infinite;
+}
+
+.animation-delay-200 {
+  animation-delay: 0.2s;
+}
+
+.animation-delay-400 {
+  animation-delay: 0.4s;
+}
+
+.animation-delay-600 {
+  animation-delay: 0.6s;
 }
 
 .animation-delay-2000 {
@@ -71,68 +238,52 @@
   animation-delay: 4s;
 }
 
-.animate-in {
-  animation: animate-in 0.5s ease-out;
+/* stagger helper */
+.stagger-1 {
+  animation-delay: 0.05s;
 }
 
-.fade-in {
-  animation: fadeIn 0.3s ease-out;
+.stagger-2 {
+  animation-delay: 0.12s;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
+.stagger-3 {
+  animation-delay: 0.19s;
+}
+
+.stagger-4 {
+  animation-delay: 0.26s;
+}
+
+/* ── Print styles (for PDF download) ── */
+@media print {
+  body {
+    background: white !important;
   }
 
-  to {
-    opacity: 1;
-  }
-}
-
-.slide-in-from-bottom-8 {
-  animation: slideInFromBottom 0.5s ease-out;
-}
-
-@keyframes slideInFromBottom {
-  from {
-    opacity: 0;
-    transform: translateY(2rem);
+  .no-print {
+    display: none !important;
   }
 
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.slide-in-from-left {
-  animation: slideInFromLeft 0.7s ease-out;
-}
-
-@keyframes slideInFromLeft {
-  from {
-    opacity: 0;
-    transform: translateX(-2rem);
+  .print-only {
+    display: block !important;
   }
 
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-.slide-in-from-right {
-  animation: slideInFromRight 0.5s ease-out;
-}
-
-@keyframes slideInFromRight {
-  from {
-    opacity: 0;
-    transform: translateX(2rem);
+  .card,
+  .glass-panel {
+    box-shadow: none !important;
+    border: 1px solid #e2e8f0 !important;
   }
 
-  to {
-    opacity: 1;
-    transform: translateX(0);
+  aside,
+  nav,
+  header {
+    display: none !important;
+  }
+
+  main {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
   }
 }

@@ -7,7 +7,7 @@ export default function Settings() {
             {/* Header */}
             <div>
                 <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Settings</h2>
-                <p className="text-slate-500">Manage your account preferences</p>
+                <p className="text-primary/70">Manage your account preferences</p>
             </div>
 
             <div className="glass-panel rounded-2xl overflow-hidden">
@@ -17,13 +17,13 @@ export default function Settings() {
                         <button className="w-full text-left px-4 py-3 rounded-xl bg-white shadow-sm border border-slate-200 font-medium text-primary flex items-center gap-3">
                             <User className="h-5 w-5" /> Profile
                         </button>
-                        <button className="w-full text-left px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-100 font-medium flex items-center gap-3 transition-colors">
+                        <button className="w-full text-left px-4 py-3 rounded-xl text-primary/70 hover:bg-slate-100 font-medium flex items-center gap-3 transition-colors">
                             <Bell className="h-5 w-5" /> Notifications
                         </button>
-                        <button className="w-full text-left px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-100 font-medium flex items-center gap-3 transition-colors">
+                        <button className="w-full text-left px-4 py-3 rounded-xl text-primary/70 hover:bg-slate-100 font-medium flex items-center gap-3 transition-colors">
                             <Shield className="h-5 w-5" /> Security
                         </button>
-                        <button className="w-full text-left px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-100 font-medium flex items-center gap-3 transition-colors">
+                        <button className="w-full text-left px-4 py-3 rounded-xl text-primary/70 hover:bg-slate-100 font-medium flex items-center gap-3 transition-colors">
                             <Key className="h-5 w-5" /> API Keys
                         </button>
                     </div>
@@ -42,15 +42,15 @@ export default function Settings() {
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div className="space-y-2">
-                                        <label className="text-sm font-medium text-slate-700">Full Name</label>
+                                        <label className="text-sm font-medium text-primary/70">Full Name</label>
                                         <input type="text" defaultValue="Dr. John Smith" className="w-full px-4 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none" />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-sm font-medium text-slate-700">Email Address</label>
+                                        <label className="text-sm font-medium text-primary/70">Email Address</label>
                                         <input type="email" defaultValue="john.smith@medivoice.ai" className="w-full px-4 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none" />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-sm font-medium text-slate-700">Specialty</label>
+                                        <label className="text-sm font-medium text-primary/70">Specialty</label>
                                         <select className="w-full px-4 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none">
                                             <option>General Practice</option>
                                             <option>Cardiology</option>
@@ -61,8 +61,8 @@ export default function Settings() {
                         </div>
 
                         <div className="pt-8 border-t border-slate-100 flex justify-end gap-3">
-                            <button className="px-6 py-2 rounded-lg text-slate-600 font-medium hover:bg-slate-50">Cancel</button>
-                            <button className="px-6 py-2 rounded-lg bg-primary text-white font-medium hover:bg-blue-600 shadow-md shadow-blue-500/20">Save Changes</button>
+                            <button className="px-6 py-2 rounded-lg text-primary/70 font-medium hover:bg-slate-50">Cancel</button>
+                            <button className="px-6 py-2 rounded-lg bg-primary text-white font-medium hover:bg-primary shadow-md shadow-blue-500/20">Save Changes</button>
                         </div>
                     </div>
                 </div>

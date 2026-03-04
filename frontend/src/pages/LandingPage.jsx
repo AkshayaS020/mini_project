@@ -20,7 +20,7 @@ export default function LandingPage() {
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-100 text-primary text-sm font-medium">
                         <span className="relative flex h-2 w-2">
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                            <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                            <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
                         </span>
                         #1 Hospital Management System
                     </div>
@@ -30,21 +30,21 @@ export default function LandingPage() {
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">Management</span>
                     </h1>
 
-                    <p className="text-xl text-slate-600 max-w-lg leading-relaxed">
+                    <p className="text-xl text-primary/70 max-w-lg leading-relaxed">
                         Optimizing Operations for Better Patient Care. Streamline your clinical workflow with our voice-driven AI assistant.
                     </p>
 
                     <div className="flex flex-col sm:flex-row gap-4 pt-4">
                         <button
                             onClick={() => navigate('/login')}
-                            className="bg-gradient-to-r from-primary to-teal-500 text-white px-8 py-4 rounded-full font-semibold shadow-lg shadow-blue-500/30 hover:shadow-blue-500/40 hover:scale-105 transition-all text-lg flex items-center justify-center gap-2"
+                            className="bg-gradient-to-r from-primary to-accent text-white px-8 py-4 rounded-full font-semibold shadow-lg shadow-blue-500/30 hover:shadow-blue-500/40 hover:scale-105 transition-all text-lg flex items-center justify-center gap-2"
                         >
                             Get Started <ArrowRight className="h-5 w-5" />
                         </button>
 
                         <button
                             onClick={() => setShowDemo(true)}
-                            className="px-8 py-4 rounded-full font-semibold text-slate-600 hover:bg-white/50 border border-transparent hover:border-slate-200 transition-all flex items-center justify-center gap-2 backdrop-blur-sm"
+                            className="px-8 py-4 rounded-full font-semibold text-primary/70 hover:bg-white/50 border border-transparent hover:border-slate-200 transition-all flex items-center justify-center gap-2 backdrop-blur-sm"
                         >
                             <Play className="h-5 w-5 fill-current" /> Watch Demo
                         </button>
@@ -76,7 +76,7 @@ export default function LandingPage() {
                                     <Activity className="h-6 w-6" />
                                 </div>
                                 <div>
-                                    <p className="text-xs text-slate-500 font-semibold uppercase">Patient Recovery</p>
+                                    <p className="text-xs text-primary/70 font-semibold uppercase">Patient Recovery</p>
                                     <p className="text-lg font-bold text-slate-900">98.5%</p>
                                 </div>
                             </div>
@@ -92,7 +92,7 @@ export default function LandingPage() {
                                     </div>
                                 </div>
                                 <div>
-                                    <p className="text-xs text-slate-500 font-semibold uppercase">Active Doctors</p>
+                                    <p className="text-xs text-primary/70 font-semibold uppercase">Active Doctors</p>
                                     <p className="text-lg font-bold text-slate-900">250+</p>
                                 </div>
                             </div>
